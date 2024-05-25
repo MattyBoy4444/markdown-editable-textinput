@@ -74,7 +74,13 @@ class MarkdownTextInput extends StatefulWidget {
       this.validators,
       this.textDirection = TextDirection.ltr,
       this.maxLines = 10,
-      this.actions = const [MarkdownType.bold, MarkdownType.italic, MarkdownType.title, MarkdownType.link, MarkdownType.list],
+      this.actions = const [
+        MarkdownType.bold,
+        MarkdownType.italic,
+        MarkdownType.title,
+        MarkdownType.link,
+        MarkdownType.list
+      ],
       this.textStyle,
       this.controller,
       this.insertLinksByDialog = true,
@@ -87,7 +93,6 @@ class MarkdownTextInput extends StatefulWidget {
       this.customCancelDialogText,
       this.customSubmitDialogText,
       this.optionnalActionButtons = const []});
-
 
   @override
   _MarkdownTextInputState createState() => _MarkdownTextInputState(controller ?? TextEditingController());
@@ -107,10 +112,11 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
     var fromIndex = min(textSelection.baseOffset, textSelection.extentOffset);
     var toIndex = max(textSelection.extentOffset, textSelection.baseOffset);
 
-    final result =
-        FormatMarkdown.convertToMarkdown(type, _controller.text, fromIndex, toIndex, titleSize: titleSize, link: link, selectedText: selectedText ?? _controller.text.substring(fromIndex, toIndex));
+    final result = FormatMarkdown.convertToMarkdown(type, _controller.text, fromIndex, toIndex,
+        titleSize: titleSize, link: link, selectedText: selectedText ?? _controller.text.substring(fromIndex, toIndex));
 
-    _controller.value = _controller.value.copyWith(text: result.data, selection: TextSelection.collapsed(offset: basePosition + result.cursorIndex));
+    _controller.value = _controller.value
+        .copyWith(text: result.data, selection: TextSelection.collapsed(offset: basePosition + result.cursorIndex));
 
     if (noTextSelected) {
       _controller.selection = TextSelection.collapsed(offset: _controller.selection.end - result.replaceCursorIndex);
@@ -146,7 +152,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
       controller: _controller,
       textCapitalization: TextCapitalization.sentences,
       validator: widget.validators != null ? (value) => widget.validators!(value) : null,
-      style: widget.textStyle ?? Theme.of(context).textTheme.bodyText1,
+      style: widget.textStyle ?? Theme.of(context).textTheme.bodyLarge,
       cursorColor: Theme.of(context).primaryColor,
       textDirection: widget.textDirection,
       decoration: InputDecoration(
@@ -226,10 +232,13 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                     } else if (type == MarkdownType.link || type == MarkdownType.image) {
                       return _basicInkwell(
                         type,
-                        customOnTap: (type == MarkdownType.link ? !widget.insertLinksByDialog : !widget.insertImageByDialog)
+                        customOnTap: (type == MarkdownType.link
+                                ? !widget.insertLinksByDialog
+                                : !widget.insertImageByDialog)
                             ? null
                             : () async {
-                                var text = _controller.text.substring(textSelection.baseOffset, textSelection.extentOffset);
+                                var text =
+                                    _controller.text.substring(textSelection.baseOffset, textSelection.extentOffset);
 
                                 var textController = TextEditingController()..text = text;
                                 var linkController = TextEditingController();
@@ -243,8 +252,6 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                       return _basicInkwell(type);
                     }
                   }).toList(),
-
-
                   ...widget.optionnalActionButtons.map((ActionButton optionActionButton) {
                     return _basicInkwell(optionActionButton, customOnTap: optionActionButton.action);
                   }).toList()
@@ -289,8 +296,10 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
     String text,
     MarkdownType type,
   ) async {
-    var finalTextInputDecoration = type == MarkdownType.link ? widget.linkDialogTextDecoration : widget.imageDialogTextDecoration;
-    var finalLinkInputDecoration = type == MarkdownType.link ? widget.linkDialogLinkDecoration : widget.imageDialogLinkDecoration;
+    var finalTextInputDecoration =
+        type == MarkdownType.link ? widget.linkDialogTextDecoration : widget.imageDialogTextDecoration;
+    var finalLinkInputDecoration =
+        type == MarkdownType.link ? widget.linkDialogLinkDecoration : widget.imageDialogLinkDecoration;
 
     var textFocus = FocusNode();
     var linkFocus = FocusNode();
